@@ -223,7 +223,7 @@ function createRoom(){
 function joinRoom(){
   const codeEl=document.getElementById("jcode");
   const code=(codeEl?codeEl.value:"").trim().toUpperCase();
-  if(code.length!==6){netFail("部屋コードは6文字です。");return;}
+  if(code.length!==4){netFail("部屋コードは4文字です。");return;}
   const name=readName("プレイヤー2");
   NET={my:1,peer:null,conn:null,on:false,applying:false,myName:name,theirName:"",code,meReady:false,theirShips:null,pend:null};
   G.players[1].name=name;
