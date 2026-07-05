@@ -202,7 +202,7 @@ let NET=null; // {my:0|1, peer, conn, on, applying, myName, theirName, code, meR
 const netActive=()=>!!(NET&&NET.conn);
 const netApplying=()=>!!(NET&&NET.applying);
 function netSend(o){if(NET&&NET.conn&&NET.on){try{NET.conn.send(o);}catch(e){}}}
-function newCode(){const s="ACDEFGHJKLMNPQRSTUVWXYZ2345679";let c="";for(let i=0;i<6;i++)c+=s[Math.floor(Math.random()*s.length)];return c;}
+function newCode(){const s="ACDEFGHJKLMNPQRSTUVWXYZ2345679";let c="";for(let i=0;i<4;i++)c+=s[Math.floor(Math.random()*s.length)];return c;}
 function readName(defName){
   const el=document.getElementById("nm");
   const v=el?el.value.trim().slice(0,12):"";
@@ -1022,7 +1022,7 @@ function renderOverlay(app){
       <input class="txtin" id="nm" maxlength="12" placeholder="あなたの名前（任意）">
       <button class="btn" onclick="createRoom()">部屋を作る（先攻・ホスト）</button>
       <div class="ovtext" style="color:var(--dim);font-size:.8rem;">— または —</div>
-      <input class="txtin" id="jcode" maxlength="6" placeholder="部屋コード（6文字）" style="text-transform:uppercase;letter-spacing:.2em;">
+      <input class="txtin" id="jcode" maxlength="4" placeholder="部屋コード（4文字）" style="text-transform:uppercase;letter-spacing:.2em;">
       <button class="btn" onclick="joinRoom()">部屋に参加（後攻）</button>
       <div class="neterr" id="neterr"></div>
       <button class="btn ghost small" onclick="G.overlay='intro';render()">◀ 戻る</button>
