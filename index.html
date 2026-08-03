@@ -202,7 +202,10 @@ let NET=null; // {my:0|1, peer, conn, on, applying, myName, theirName, code, meR
 const netActive=()=>!!(NET&&NET.conn);
 const netApplying=()=>!!(NET&&NET.applying);
 function netSend(o){if(NET&&NET.conn&&NET.on){try{NET.conn.send(o);}catch(e){}}}
-function newCode(){const s="ACDEFGHJKLMNPQRSTUVWXYZ2345679";let c="";for(let i=0;i<4;i++)c+=s[Math.floor(Math.random()*s.length)];return c;}
+const CODE_LEN=4; // 部屋コード文字数（生成・検証・UI表示すべてここを参照）
+function newCode(){const s="ACDEFGHJKLMNPQRSTUVWXYZ2345679";let c="";for(let i=0;i<CODE_LEN;i++)c+=s[Math.floor(Math.random()*s.length)];return c;}
+/* 部屋コードの正規化：全角→半角(NFKC)、大文字化、英数字以外を除去 */
+function normCode(v){return (v||"").normalize("NFKC").toUpperCase().replace(/[^A-Z0-9]/g,"");}
 function readName(defName){
   const el=document.getElementById("nm");
   const v=el?el.value.trim().slice(0,12):"";
@@ -222,8 +225,8 @@ function createRoom(){
 }
 function joinRoom(){
   const codeEl=document.getElementById("jcode");
-  const code=(codeEl?codeEl.value:"").trim().toUpperCase();
-  if(code.length!==4){netFail("部屋コードは4文字です。");return;}
+  const code=normCode(codeEl?codeEl.value:"");
+  if(code.length!==CODE_LEN){netFail(`部屋コードは英数字${CODE_LEN}文字です。全角や空白は自動で除去されます。`);return;}
   const name=readName("プレイヤー2");
   NET={my:1,peer:null,conn:null,on:false,applying:false,myName:name,theirName:"",code,meReady:false,theirShips:null,pend:null};
   G.players[1].name=name;
@@ -1022,7 +1025,7 @@ function renderOverlay(app){
       <input class="txtin" id="nm" maxlength="12" placeholder="あなたの名前（任意）">
       <button class="btn" onclick="createRoom()">部屋を作る（先攻・ホスト）</button>
       <div class="ovtext" style="color:var(--dim);font-size:.8rem;">— または —</div>
-      <input class="txtin" id="jcode" maxlength="4" placeholder="部屋コード（4文字）" style="text-transform:uppercase;letter-spacing:.2em;">
+      <input class="txtin" id="jcode" maxlength="${CODE_LEN*2}" autocapitalize="characters" autocomplete="off" placeholder="部屋コード（${CODE_LEN}文字）" style="text-transform:uppercase;letter-spacing:.2em;">
       <button class="btn" onclick="joinRoom()">部屋に参加（後攻）</button>
       <div class="neterr" id="neterr"></div>
       <button class="btn ghost small" onclick="G.overlay='intro';render()">◀ 戻る</button>
